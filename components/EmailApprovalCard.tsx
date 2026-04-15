@@ -1,7 +1,9 @@
 'use client'
 
 import { Button, Card, CardContent, CardFooter, CardHeader, Chip } from '@heroui/react'
-import { EApprovalStatus, TEmailPayload } from '@type/chat'
+
+import type { TEmailPayload } from '@type/chat'
+import { EApprovalStatus } from '@type/chat'
 
 interface IProps {
   toolCallId: string
@@ -29,9 +31,15 @@ export const EmailApprovalCard = ({ toolCallId, payload, status, onAccept, onRej
         )}
       </CardHeader>
       <CardContent className="py-2 flex flex-col gap-1">
-        <p className="text-xs text-[#8e8ea0]">To: <span className="text-[#ececec]">{payload.to}</span></p>
-        <p className="text-xs text-[#8e8ea0]">Subject: <span className="text-[#ececec] font-medium">{payload.subject}</span></p>
-        <p className="text-xs text-[#8e8ea0] mt-1 whitespace-pre-wrap break-words border-t border-white/10 pt-2">{payload.body}</p>
+        <p className="text-xs text-[#8e8ea0]">
+          To: <span className="text-[#ececec]">{payload.to}</span>
+        </p>
+        <p className="text-xs text-[#8e8ea0]">
+          Subject: <span className="text-[#ececec] font-medium">{payload.subject}</span>
+        </p>
+        <p className="text-xs text-[#8e8ea0] mt-1 whitespace-pre-wrap break-words border-t border-white/10 pt-2">
+          {payload.body}
+        </p>
       </CardContent>
       {isPending && (
         <CardFooter className="gap-2 pt-1">

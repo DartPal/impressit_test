@@ -39,9 +39,10 @@ The assistant supports three human-in-the-loop tools. In each case the model pro
 - **Reject** → assistant asks which detail to change, then re-proposes with updates
 
 Example prompts:
-- *"Schedule a team sync tomorrow at 10am for 30 minutes"*
-- *"Send an email to john@example.com about the project deadline"*
-- *"Create a high priority task to review the PR by Friday"*
+
+- _"Schedule a team sync tomorrow at 10am for 30 minutes"_
+- _"Send an email to john@example.com about the project deadline"_
+- _"Create a high priority task to review the PR by Friday"_
 
 All LLM calls happen server-side in `app/api/chat/route.ts`. The client never touches the Groq API directly.
 
@@ -73,7 +74,6 @@ types/
 
 ## Environment variables
 
-| Variable | Description |
-|---|---|
+| Variable       | Description                                               |
+| -------------- | --------------------------------------------------------- |
 | `GROQ_API_KEY` | API key from [console.groq.com](https://console.groq.com) |
-

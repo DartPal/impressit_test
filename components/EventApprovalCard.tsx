@@ -1,7 +1,9 @@
 'use client'
 
 import { Button, Card, CardContent, CardFooter, CardHeader, Chip } from '@heroui/react'
-import { EApprovalStatus, TEventPayload } from '@type/chat'
+
+import type { TEventPayload } from '@type/chat'
+import { EApprovalStatus } from '@type/chat'
 
 interface IProps {
   toolCallId: string

@@ -1,7 +1,9 @@
 'use client'
 
 import { Button, Card, CardContent, CardFooter, CardHeader, Chip } from '@heroui/react'
-import { EApprovalStatus, TTaskPayload } from '@type/chat'
+
+import type { TTaskPayload } from '@type/chat'
+import { EApprovalStatus } from '@type/chat'
 
 interface IProps {
   toolCallId: string
@@ -42,7 +44,9 @@ export const TaskApprovalCard = ({ toolCallId, payload, status, onAccept, onReje
           </Chip>
         </div>
         {payload.description && (
-          <p className="text-xs text-[#8e8ea0] whitespace-pre-wrap break-words">{payload.description}</p>
+          <p className="text-xs text-[#8e8ea0] whitespace-pre-wrap break-words">
+            {payload.description}
+          </p>
         )}
         <p className="text-xs text-[#8e8ea0]">
           Due:{' '}

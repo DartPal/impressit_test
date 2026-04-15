@@ -1,11 +1,12 @@
 'use client'
 
+import type { UIMessage } from 'ai'
 import { useEffect, useRef } from 'react'
-import { UIMessage } from 'ai'
-import { EApprovalStatus, TEmailPayload, TEventPayload, TTaskPayload } from '@type/chat'
-import { EventApprovalCard } from '@components/EventApprovalCard'
+
 import { EmailApprovalCard } from '@components/EmailApprovalCard'
+import { EventApprovalCard } from '@components/EventApprovalCard'
 import { TaskApprovalCard } from '@components/TaskApprovalCard'
+import type { EApprovalStatus, TEmailPayload, TEventPayload, TTaskPayload } from '@type/chat'
 
 interface IProps {
   messages: UIMessage[]

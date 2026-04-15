@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
 import { Button, Input, TextField } from '@heroui/react'
-import { FormEvent } from 'react'
+import { useRef } from 'react'
+import type { FormEvent } from 'react'
 
 interface IProps {
   input: string
@@ -26,7 +26,10 @@ export const ChatInput = ({ input, isLoading, onInputChange, onSubmit }: IProps)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-3 px-4 py-4 pb-6 border-t border-white/10 bg-[#212121]">
+    <form
+      onSubmit={handleSubmit}
+      className="flex gap-3 px-4 py-4 pb-6 border-t border-white/10 bg-[#212121]"
+    >
       <TextField className="flex-1" isDisabled={isLoading}>
         <Input
           ref={inputRef}

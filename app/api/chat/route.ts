@@ -1,5 +1,7 @@
 import { createGroq } from '@ai-sdk/groq'
-import { convertToModelMessages, streamText, UIMessage } from 'ai'
+import type { UIMessage } from 'ai'
+import { convertToModelMessages, streamText } from 'ai'
+
 import { tools } from '@lib/tools'
 
 const groq = createGroq()
@@ -9,13 +11,14 @@ export const maxDuration = 30
 function lastToolWasRejected(messages: UIMessage[]): boolean {
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i]
-    if (msg.role === 'user') return false
-    if (msg.role !== 'assistant') continue
+    if (msg.role === 'user') {
+      return false
+    }
+    if (msg.role !== 'assistant') {
+      continue
+    }
     const toolPart = msg.parts?.find(
-      (p) =>
-        'state' in p &&
-        (p as { state: string }).state === 'output-available' &&
-        'output' in p,
+      (p) => 'state' in p && (p as { state: string }).state === 'output-available' && 'output' in p,
     )
     if (toolPart) {
       const output = (toolPart as { output: { confirmed?: boolean } }).output

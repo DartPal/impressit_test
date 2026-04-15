@@ -1,8 +1,9 @@
 'use client'
 
-import { useRef, useState } from 'react'
 import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport, UIMessage } from 'ai'
+import type { UIMessage } from 'ai'
+import { DefaultChatTransport } from 'ai'
+import { useRef, useState } from 'react'
 
 export const useAiChat = () => {
   const [input, setInput] = useState('')
@@ -12,23 +13,23 @@ export const useAiChat = () => {
     transport: new DefaultChatTransport({ api: '/api/chat' }),
     sendAutomaticallyWhen: ({ messages }: { messages: UIMessage[] }) => {
       const last = messages[messages.length - 1]
-      if (!last || last.role !== 'assistant') return false
+      if (!last || last.role !== 'assistant') {
+        return false
+      }
 
       const pendingParts = (last.parts ?? []).filter(
         (p) =>
           'state' in p &&
           (p as { state: string; toolCallId: string }).state === 'output-available' &&
-          !submittedToolCallIds.current.has(
-            (p as { toolCallId: string }).toolCallId,
-          ),
+          !submittedToolCallIds.current.has((p as { toolCallId: string }).toolCallId),
       )
 
-      if (!pendingParts.length) return false
+      if (!pendingParts.length) {
+        return false
+      }
 
       pendingParts.forEach((p) =>
-        submittedToolCallIds.current.add(
-          (p as { toolCallId: string }).toolCallId,
-        ),
+        submittedToolCallIds.current.add((p as { toolCallId: string }).toolCallId),
       )
 
       return true
@@ -39,7 +40,9 @@ export const useAiChat = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim()) {
+      return
+    }
     chat.sendMessage({ role: 'user', parts: [{ type: 'text', text: input }] })
     setInput('')
   }

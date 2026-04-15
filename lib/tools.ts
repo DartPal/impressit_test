@@ -27,13 +27,11 @@ export const tools = {
     inputSchema: scheduleEventSchema,
   }),
   sendEmail: tool({
-    description:
-      'Compose and propose sending an email. The user must approve before it is sent.',
+    description: 'Compose and propose sending an email. The user must approve before it is sent.',
     inputSchema: sendEmailSchema,
   }),
   createTask: tool({
-    description:
-      'Propose creating a task. The user must approve before it is created.',
+    description: 'Propose creating a task. The user must approve before it is created.',
     inputSchema: createTaskSchema,
   }),
 }
