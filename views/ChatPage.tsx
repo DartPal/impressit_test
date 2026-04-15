@@ -25,29 +25,26 @@ export const ChatPage = () => {
     );
 
     const handleAccept = useMemo(
-        () => (toolCallId: string) => {
+        () => (tool: string, toolCallId: string) => {
             approve(toolCallId);
             addToolResult({
-                tool: "scheduleEvent",
+                tool,
                 toolCallId,
-                output: {
-                    confirmed: true,
-                    message: "User accepted the event.",
-                },
+                output: { confirmed: true, message: "User accepted." },
             });
         },
         [approve, addToolResult],
     );
 
     const handleReject = useMemo(
-        () => (toolCallId: string) => {
+        () => (tool: string, toolCallId: string) => {
             reject(toolCallId);
             addToolResult({
-                tool: "scheduleEvent",
+                tool,
                 toolCallId,
                 output: {
                     confirmed: false,
-                    message: "User rejected the event. Ask the user what they would like to change.",
+                    message: "User rejected. Ask the user what they would like to change.",
                 },
             });
         },
@@ -59,7 +56,7 @@ export const ChatPage = () => {
             <header className="px-4 py-3 border-b border-white/10 bg-[#212121]">
                 <h1 className="text-lg font-semibold text-[#ececec]">AI Assistant</h1>
                 <p className="text-xs text-[#8e8ea0]">
-                    Ask me to schedule an event
+                    Schedule events or send emails
                 </p>
             </header>
             <MessageList

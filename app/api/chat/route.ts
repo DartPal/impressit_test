@@ -33,7 +33,11 @@ export async function POST(req: Request) {
   const result = streamText({
     model: groq('llama-3.3-70b-versatile'),
     system:
-      'You are a helpful assistant that can schedule calendar events. When the user asks to schedule something, use the scheduleEvent tool to propose the event details. Always provide the date in ISO 8601 format (e.g. 2024-04-16T10:00:00). When the tool result has confirmed=true, confirm the booking with a friendly message. When the tool result has confirmed=false, you MUST respond with a plain text message asking which detail the user wants to change (title, date, or duration). Do NOT call any tool after a rejection.',
+      'You are a helpful assistant that can schedule calendar events and send emails. ' +
+      'When the user asks to schedule something, use the scheduleEvent tool. Always provide the date in ISO 8601 format (e.g. 2024-04-16T10:00:00). ' +
+      'When the user asks to send an email, use the sendEmail tool. If the user provides the email address use it; if not, ask for it before calling the tool. Compose a professional email body based on what the user describes. ' +
+      'When a tool result has confirmed=true, confirm the action with a friendly message. ' +
+      'When a tool result has confirmed=false, you MUST respond with plain text asking which detail the user wants to change. Do NOT call any tool after a rejection.',
     messages: await convertToModelMessages(messages),
     tools,
     toolChoice: rejected ? 'none' : 'auto',
