@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Chat — Senior Frontend Engineer Test Task
 
-## Getting Started
+Streaming AI chat interface with human-in-the-loop tool approval, built with Next.js App Router, Vercel AI SDK, HeroUI, and Groq.
 
-First, run the development server:
+## Stack
+
+- **Next.js** (App Router)
+- **Vercel AI SDK** — `ai` + `@ai-sdk/react` + `@ai-sdk/groq`
+- **HeroUI v3** — UI components
+- **Tailwind CSS**
+- **TypeScript** (strict)
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd <repo>
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Add your Groq API key to `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+GROQ_API_KEY=sk-...
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## How it works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Type a message asking to schedule an event (e.g. *"Schedule a team sync tomorrow at 10am for 30 minutes"*).
+2. The assistant invokes the `scheduleEvent` tool and renders an **approval card** in the chat thread.
+3. Click **Accept** → the assistant confirms the booking. Click **Reject** → the assistant asks what to change.
+4. All LLM calls happen server-side in `app/api/chat/route.ts`. The client never touches the Groq API directly.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
+```
+app/
+├── api/chat/route.ts         ← POST handler: streamText + scheduleEvent tool
+├── layout.tsx                ← Poppins font, global dark styles
+└── page.tsx                  ← renders <ChatPage />
+views/
+└── ChatPage.tsx              ← "use client" composition root
+components/
+├── ChatInput.tsx             ← HeroUI Input + Button (send icon)
+├── MessageList.tsx           ← renders text bubbles + tool cards
+└── EventApprovalCard.tsx     ← HeroUI Card with Accept / Reject
+hooks/
+├── api/useAiChat.ts          ← wraps useChat → /api/chat
+└── helpers/
+    ├── useMessages.ts        ← useMemo: derive message parts
+    └── useApproval.ts        ← useMemo: approval state per toolCallId
+lib/tools.ts                  ← Zod schemas + tool definitions (no execute fn)
+types/chat.ts                 ← EApprovalStatus, TEventPayload, TToolCallState
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Variable | Description |
+|---|---|
+| `GROQ_API_KEY` | API key from [console.groq.com](https://console.groq.com) |
