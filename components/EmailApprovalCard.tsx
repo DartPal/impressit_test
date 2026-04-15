@@ -9,7 +9,7 @@ interface IProps {
   toolCallId: string
   payload: TEmailPayload
   status: EApprovalStatus
-  onAccept: (tool: string, toolCallId: string) => void
+  onAccept: (tool: string, toolCallId: string, payload: TEmailPayload) => void
   onReject: (tool: string, toolCallId: string) => void
 }
 
@@ -47,7 +47,7 @@ export const EmailApprovalCard = ({ toolCallId, payload, status, onAccept, onRej
             size="sm"
             variant="outline"
             className="text-green-400 border-green-400/40 hover:bg-green-400/10 rounded-xl"
-            onPress={() => onAccept('sendEmail', toolCallId)}
+            onPress={() => onAccept('sendEmail', toolCallId, payload)}
           >
             Send
           </Button>

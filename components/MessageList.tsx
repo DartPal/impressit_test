@@ -11,7 +11,11 @@ import type { EApprovalStatus, TEmailPayload, TEventPayload, TTaskPayload } from
 interface IProps {
   messages: UIMessage[]
   getStatus: (toolCallId: string) => EApprovalStatus
-  onAccept: (tool: string, toolCallId: string) => void
+  onAccept: (
+    tool: string,
+    toolCallId: string,
+    payload: TEventPayload | TEmailPayload | TTaskPayload,
+  ) => void
   onReject: (tool: string, toolCallId: string) => void
 }
 

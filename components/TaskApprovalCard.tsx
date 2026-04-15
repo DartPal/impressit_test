@@ -9,7 +9,7 @@ interface IProps {
   toolCallId: string
   payload: TTaskPayload
   status: EApprovalStatus
-  onAccept: (tool: string, toolCallId: string) => void
+  onAccept: (tool: string, toolCallId: string, payload: TTaskPayload) => void
   onReject: (tool: string, toolCallId: string) => void
 }
 
@@ -64,7 +64,7 @@ export const TaskApprovalCard = ({ toolCallId, payload, status, onAccept, onReje
             size="sm"
             variant="outline"
             className="text-green-400 border-green-400/40 hover:bg-green-400/10 rounded-xl"
-            onPress={() => onAccept('createTask', toolCallId)}
+            onPress={() => onAccept('createTask', toolCallId, payload)}
           >
             Create
           </Button>

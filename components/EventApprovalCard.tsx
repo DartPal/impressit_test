@@ -9,7 +9,7 @@ interface IProps {
   toolCallId: string
   payload: TEventPayload
   status: EApprovalStatus
-  onAccept: (tool: string, toolCallId: string) => void
+  onAccept: (tool: string, toolCallId: string, payload: TEventPayload) => void
   onReject: (tool: string, toolCallId: string) => void
 }
 
@@ -48,7 +48,7 @@ export const EventApprovalCard = ({ toolCallId, payload, status, onAccept, onRej
             size="sm"
             variant="outline"
             className="text-green-400 border-green-400/40 hover:bg-green-400/10 rounded-xl"
-            onPress={() => onAccept('scheduleEvent', toolCallId)}
+            onPress={() => onAccept('scheduleEvent', toolCallId, payload)}
           >
             Accept
           </Button>

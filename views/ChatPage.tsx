@@ -5,26 +5,37 @@ import { useMemo } from 'react'
 import { ChatInput } from '@components/ChatInput'
 import { MessageList } from '@components/MessageList'
 import { useAiChat } from '@hooks/api/useAiChat'
+import { useExecuteAction } from '@hooks/api/useExecuteAction'
 import { useApproval } from '@hooks/helpers/useApproval'
 import { useMessages } from '@hooks/helpers/useMessages'
+import type { TEmailPayload, TEventPayload, TTaskPayload } from '@type/chat'
 
 export const ChatPage = () => {
   const { messages, input, handleInputChange, handleSubmit, addToolResult, status } = useAiChat()
   const { processedMessages } = useMessages(messages)
   const { approve, reject, getStatus } = useApproval()
+  const { executeSchedule, executeEmail } = useExecuteAction()
 
   const isLoading = useMemo(() => status === 'streaming' || status === 'submitted', [status])
 
   const handleAccept = useMemo(
-    () => (tool: string, toolCallId: string) => {
-      approve(toolCallId)
-      addToolResult({
-        tool,
-        toolCallId,
-        output: { confirmed: true, message: 'User accepted.' },
-      })
-    },
-    [approve, addToolResult],
+    () =>
+      (tool: string, toolCallId: string, payload: TEventPayload | TEmailPayload | TTaskPayload) => {
+        approve(toolCallId)
+
+        if (tool === 'scheduleEvent') {
+          executeSchedule(payload as TEventPayload)
+        } else if (tool === 'sendEmail') {
+          executeEmail(payload as TEmailPayload)
+        }
+
+        addToolResult({
+          tool,
+          toolCallId,
+          output: { confirmed: true, message: 'User accepted.' },
+        })
+      },
+    [approve, addToolResult, executeSchedule, executeEmail],
   )
 
   const handleReject = useMemo(
