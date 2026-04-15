@@ -56,7 +56,7 @@ export const ChatPage = () => {
             <header className="px-4 py-3 border-b border-white/10 bg-[#212121]">
                 <h1 className="text-lg font-semibold text-[#ececec]">AI Assistant</h1>
                 <p className="text-xs text-[#8e8ea0]">
-                    Schedule events or send emails
+                    Schedule events, send emails or create tasks
                 </p>
             </header>
             <MessageList

@@ -2,9 +2,10 @@
 
 import { useEffect, useRef } from 'react'
 import { UIMessage } from 'ai'
-import { EApprovalStatus, TEmailPayload, TEventPayload } from '@type/chat'
+import { EApprovalStatus, TEmailPayload, TEventPayload, TTaskPayload } from '@type/chat'
 import { EventApprovalCard } from '@components/EventApprovalCard'
 import { EmailApprovalCard } from '@components/EmailApprovalCard'
+import { TaskApprovalCard } from '@components/TaskApprovalCard'
 
 interface IProps {
   messages: UIMessage[]
@@ -70,6 +71,27 @@ export const MessageList = ({ messages, getStatus, onAccept, onReject }: IProps)
               if (toolPart.state === 'input-available' || toolPart.state === 'output-available') {
                 return (
                   <EmailApprovalCard
+                    key={toolPart.toolCallId}
+                    toolCallId={toolPart.toolCallId}
+                    payload={toolPart.input}
+                    status={getStatus(toolPart.toolCallId)}
+                    onAccept={onAccept}
+                    onReject={onReject}
+                  />
+                )
+              }
+            }
+
+            if (part.type === 'tool-createTask') {
+              const toolPart = part as {
+                type: 'tool-createTask'
+                toolCallId: string
+                state: string
+                input: TTaskPayload
+              }
+              if (toolPart.state === 'input-available' || toolPart.state === 'output-available') {
+                return (
+                  <TaskApprovalCard
                     key={toolPart.toolCallId}
                     toolCallId={toolPart.toolCallId}
                     payload={toolPart.input}

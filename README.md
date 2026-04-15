@@ -33,31 +33,42 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## How it works
 
-1. Type a message asking to schedule an event (e.g. *"Schedule a team sync tomorrow at 10am for 30 minutes"*).
-2. The assistant invokes the `scheduleEvent` tool and renders an **approval card** in the chat thread.
-3. Click **Accept** → the assistant confirms the booking. Click **Reject** → the assistant asks what to change.
-4. All LLM calls happen server-side in `app/api/chat/route.ts`. The client never touches the Groq API directly.
+The assistant supports three human-in-the-loop tools. In each case the model proposes an action, the user sees an approval card, and clicks **Accept** or **Reject**:
+
+- **Accept** → assistant confirms the action
+- **Reject** → assistant asks which detail to change, then re-proposes with updates
+
+Example prompts:
+- *"Schedule a team sync tomorrow at 10am for 30 minutes"*
+- *"Send an email to john@example.com about the project deadline"*
+- *"Create a high priority task to review the PR by Friday"*
+
+All LLM calls happen server-side in `app/api/chat/route.ts`. The client never touches the Groq API directly.
 
 ## Architecture
 
 ```
 app/
-├── api/chat/route.ts         ← POST handler: streamText + scheduleEvent tool
-├── layout.tsx                ← Poppins font, global dark styles
-└── page.tsx                  ← renders <ChatPage />
+├── api/chat/route.ts              ← POST handler: streamText + all tools, toolChoice guard
+├── layout.tsx                     ← Poppins font, global dark styles
+└── page.tsx                       ← renders <ChatPage />
 views/
-└── ChatPage.tsx              ← "use client" composition root
+└── ChatPage.tsx                   ← "use client" composition root
 components/
-├── ChatInput.tsx             ← HeroUI Input + Button (send icon)
-├── MessageList.tsx           ← renders text bubbles + tool cards
-└── EventApprovalCard.tsx     ← HeroUI Card with Accept / Reject
+├── ChatInput.tsx                  ← HeroUI Input + Button, autofocus after send
+├── MessageList.tsx                ← renders text bubbles + tool cards, autoscroll
+├── EventApprovalCard.tsx          ← schedule event card with Accept / Reject
+├── EmailApprovalCard.tsx          ← send email card with Send / Reject
+└── TaskApprovalCard.tsx           ← create task card with priority chip + Create / Reject
 hooks/
-├── api/useAiChat.ts          ← wraps useChat → /api/chat
+├── api/useAiChat.ts               ← wraps useChat, sendAutomaticallyWhen per-toolCallId
 └── helpers/
-    ├── useMessages.ts        ← useMemo: derive message parts
-    └── useApproval.ts        ← useMemo: approval state per toolCallId
-lib/tools.ts                  ← Zod schemas + tool definitions (no execute fn)
-types/chat.ts                 ← EApprovalStatus, TEventPayload, TToolCallState
+    ├── useMessages.ts             ← useMemo: derive processed message list
+    └── useApproval.ts             ← useMemo: approval state map per toolCallId
+lib/
+└── tools.ts                       ← Zod schemas + tool definitions (no execute fn)
+types/
+└── chat.ts                        ← EApprovalStatus, TEventPayload, TEmailPayload, TTaskPayload
 ```
 
 ## Environment variables
@@ -65,3 +76,4 @@ types/chat.ts                 ← EApprovalStatus, TEventPayload, TToolCallState
 | Variable | Description |
 |---|---|
 | `GROQ_API_KEY` | API key from [console.groq.com](https://console.groq.com) |
+

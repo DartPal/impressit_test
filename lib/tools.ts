@@ -13,6 +13,13 @@ export const sendEmailSchema = z.object({
   body: z.string().describe('Email body text'),
 })
 
+export const createTaskSchema = z.object({
+  title: z.string().describe('Task title'),
+  description: z.string().describe('Task description'),
+  dueDate: z.string().describe('Due date in ISO 8601 format'),
+  priority: z.string().describe('Task priority: low, medium, or high'),
+})
+
 export const tools = {
   scheduleEvent: tool({
     description:
@@ -23,5 +30,10 @@ export const tools = {
     description:
       'Compose and propose sending an email. The user must approve before it is sent.',
     inputSchema: sendEmailSchema,
+  }),
+  createTask: tool({
+    description:
+      'Propose creating a task. The user must approve before it is created.',
+    inputSchema: createTaskSchema,
   }),
 }

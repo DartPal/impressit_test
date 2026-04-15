@@ -16,8 +16,15 @@ export type TEmailPayload = {
   body: string
 }
 
+export type TTaskPayload = {
+  title: string
+  description: string
+  dueDate: string
+  priority: string
+}
+
 export type TToolCallState = {
   toolCallId: string
   status: EApprovalStatus
-  payload: TEventPayload | TEmailPayload
+  payload: TEventPayload | TEmailPayload | TTaskPayload
 }
