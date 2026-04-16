@@ -1,21 +1,22 @@
 'use client'
 
+import { Text } from '@heroui/react'
 import type { UIMessage } from 'ai'
 import { useEffect, useRef } from 'react'
 
-import { EmailApprovalCard } from '@components/EmailApprovalCard'
-import { EventApprovalCard } from '@components/EventApprovalCard'
-import { TaskApprovalCard } from '@components/TaskApprovalCard'
-import type { EApprovalStatus, TEmailPayload, TEventPayload, TTaskPayload } from '@type/chat'
+import { ApprovalCard } from '@components/ApprovalCard'
+import type {
+  EApprovalStatus,
+  TEmailPayload,
+  TEventPayload,
+  TScheduleEventPart,
+  TSendEmailPart,
+} from '@type'
 
 interface IProps {
   messages: UIMessage[]
   getStatus: (toolCallId: string) => EApprovalStatus
-  onAccept: (
-    tool: string,
-    toolCallId: string,
-    payload: TEventPayload | TEmailPayload | TTaskPayload,
-  ) => void
+  onAccept: (tool: string, toolCallId: string, payload: TEventPayload | TEmailPayload) => void
   onReject: (tool: string, toolCallId: string) => void
 }
 
@@ -36,26 +37,23 @@ export const MessageList = ({ messages, getStatus, onAccept, onReject }: IProps)
           {message.parts?.map((part, i) => {
             if (part.type === 'text') {
               return (
-                <div
+                <Text
                   key={i}
-                  className="px-4 py-2 rounded-2xl max-w-[75%] text-sm whitespace-pre-wrap break-words bg-[#2f2f2f] text-[#ececec]"
+                  size="sm"
+                  className="px-4 py-2 rounded-2xl max-w-[75%] whitespace-pre-wrap break-words bg-[#2f2f2f] text-[#ececec]"
                 >
                   {part.text}
-                </div>
+                </Text>
               )
             }
 
             if (part.type === 'tool-scheduleEvent') {
-              const toolPart = part as {
-                type: 'tool-scheduleEvent'
-                toolCallId: string
-                state: string
-                input: TEventPayload
-              }
+              const toolPart = part as TScheduleEventPart
               if (toolPart.state === 'input-available' || toolPart.state === 'output-available') {
                 return (
-                  <EventApprovalCard
+                  <ApprovalCard
                     key={toolPart.toolCallId}
+                    tool="scheduleEvent"
                     toolCallId={toolPart.toolCallId}
                     payload={toolPart.input}
                     status={getStatus(toolPart.toolCallId)}
@@ -67,37 +65,12 @@ export const MessageList = ({ messages, getStatus, onAccept, onReject }: IProps)
             }
 
             if (part.type === 'tool-sendEmail') {
-              const toolPart = part as {
-                type: 'tool-sendEmail'
-                toolCallId: string
-                state: string
-                input: TEmailPayload
-              }
+              const toolPart = part as TSendEmailPart
               if (toolPart.state === 'input-available' || toolPart.state === 'output-available') {
                 return (
-                  <EmailApprovalCard
+                  <ApprovalCard
                     key={toolPart.toolCallId}
-                    toolCallId={toolPart.toolCallId}
-                    payload={toolPart.input}
-                    status={getStatus(toolPart.toolCallId)}
-                    onAccept={onAccept}
-                    onReject={onReject}
-                  />
-                )
-              }
-            }
-
-            if (part.type === 'tool-createTask') {
-              const toolPart = part as {
-                type: 'tool-createTask'
-                toolCallId: string
-                state: string
-                input: TTaskPayload
-              }
-              if (toolPart.state === 'input-available' || toolPart.state === 'output-available') {
-                return (
-                  <TaskApprovalCard
-                    key={toolPart.toolCallId}
+                    tool="sendEmail"
                     toolCallId={toolPart.toolCallId}
                     payload={toolPart.input}
                     status={getStatus(toolPart.toolCallId)}

@@ -23,9 +23,11 @@
       "@pages/*": ["./views/*"],
       "@hooks/*": ["./hooks/*"],
       "@components/*": ["./components/*"],
-      "@lib/*": ["./lib/*"],
-      "@type/*": ["./types/*"],
-      "@utils/*": ["./utils/*"]
+      "@lib": ["./lib/index"],
+      "@type": ["./types/index"],
+      "@consts": ["./consts/index"],
+      "@icons/*": ["./components/common/icons/*"],
+      "@utils": ["./utils/index"]
     }
   },
   "include": [

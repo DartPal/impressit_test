@@ -1,8 +1,10 @@
 'use client'
 
 import { Button, Input, TextField } from '@heroui/react'
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import type { FormEvent } from 'react'
+
+import { SendIcon } from '@icons/SendIcon'
 
 interface IProps {
   input: string
@@ -11,19 +13,16 @@ interface IProps {
   onSubmit: (e: FormEvent<HTMLFormElement>) => void
 }
 
-const SendIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18">
-    <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.405Z" />
-  </svg>
-)
-
 export const ChatInput = ({ input, isLoading, onInputChange, onSubmit }: IProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    onSubmit(e)
-    requestAnimationFrame(() => inputRef.current?.focus())
-  }
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      onSubmit(e)
+      requestAnimationFrame(() => inputRef.current?.focus())
+    },
+    [onSubmit],
+  )
 
   return (
     <form

@@ -3,7 +3,18 @@
 import { useChat } from '@ai-sdk/react'
 import type { UIMessage } from 'ai'
 import { DefaultChatTransport } from 'ai'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+
+type TToolPart = { type: `tool-${string}`; state: string; toolCallId: string }
+
+const isToolPart = (p: unknown): p is TToolPart =>
+  typeof p === 'object' &&
+  p !== null &&
+  'type' in p &&
+  typeof (p as { type: unknown }).type === 'string' &&
+  (p as { type: string }).type.startsWith('tool-') &&
+  'state' in p &&
+  'toolCallId' in p
 
 export const useAiChat = () => {
   const [input, setInput] = useState('')
@@ -17,35 +28,49 @@ export const useAiChat = () => {
         return false
       }
 
-      const pendingParts = (last.parts ?? []).filter(
-        (p) =>
-          'state' in p &&
-          (p as { state: string; toolCallId: string }).state === 'output-available' &&
-          !submittedToolCallIds.current.has((p as { toolCallId: string }).toolCallId),
-      )
+      const pendingParts = (last.parts ?? []).filter((p) => {
+        if (!isToolPart(p)) {
+          return false
+        }
+        return p.state === 'output-available' && !submittedToolCallIds.current.has(p.toolCallId)
+      })
 
       if (!pendingParts.length) {
         return false
       }
 
-      pendingParts.forEach((p) =>
-        submittedToolCallIds.current.add((p as { toolCallId: string }).toolCallId),
-      )
-
+      pendingParts.forEach((p) => {
+        if (isToolPart(p)) {
+          submittedToolCallIds.current.add(p.toolCallId)
+        }
+      })
       return true
     },
   })
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value),
+    [],
+  )
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!input.trim()) {
-      return
-    }
-    chat.sendMessage({ role: 'user', parts: [{ type: 'text', text: input }] })
-    setInput('')
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (!input.trim()) {
+        return
+      }
+      chat.sendMessage({ role: 'user', parts: [{ type: 'text', text: input }] })
+      setInput('')
+    },
+    [chat, input],
+  )
+
+  return {
+    messages: chat.messages,
+    addToolResult: chat.addToolResult,
+    status: chat.status,
+    input,
+    handleInputChange,
+    handleSubmit,
   }
-
-  return { ...chat, input, handleInputChange, handleSubmit }
 }
